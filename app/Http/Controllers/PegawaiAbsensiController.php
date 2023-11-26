@@ -218,7 +218,7 @@ class PegawaiAbsensiController extends Controller
         $waktu_absen = date('H:i', time());
 
         // $waktu_absen = '05:30'; // Pagi
-        // $waktu_absen = '06:30'; // Pagi - Terlambat
+        $waktu_absen = '06:30'; // Pagi - Terlambat
         // $waktu_absen = '08:45'; // Siang
         // $waktu_absen = '10:00'; // Siang - Terlambat
         // $waktu_absen = '13:30'; // Malam
@@ -293,7 +293,7 @@ class PegawaiAbsensiController extends Controller
         
         $data_absensi_detail = [
             // 'absen_masuk' => time(),
-            'absen_masuk' => intval ($waktu_absen),
+            'absen_masuk' => strtotime ($waktu_absen),
             'status_masuk' => $terlambat,
             'latitude_masuk' => $latitude,
             'longitude_masuk' => $longitude,
