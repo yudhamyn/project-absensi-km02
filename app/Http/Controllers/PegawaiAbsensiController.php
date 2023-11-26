@@ -292,7 +292,8 @@ class PegawaiAbsensiController extends Controller
         file_put_contents('assets/img/pegawai/' . $filename, $img);
         
         $data_absensi_detail = [
-            'absen_masuk' => time(),
+            // 'absen_masuk' => time(),
+            'absen_masuk' => intval ($waktu_absen),
             'status_masuk' => $terlambat,
             'latitude_masuk' => $latitude,
             'longitude_masuk' => $longitude,
