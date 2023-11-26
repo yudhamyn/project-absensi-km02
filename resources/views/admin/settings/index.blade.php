@@ -102,7 +102,7 @@
                                 @method('PUT')
                                 <div class="row gutters">
 
-                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    {{-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <!-- Field wrapper start -->
                                         <div class="field-wrapper">
                                             <input class="form-control" type="hidden" name="id" value="{{ $settings->id }}">
@@ -125,7 +125,7 @@
                                             </div>
                                         </div>
                                         <!-- Field wrapper end -->
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <!-- Field wrapper start -->

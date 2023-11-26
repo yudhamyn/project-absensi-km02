@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use App\Models\AbsensiDetail;
+use App\Models\JamKerja;
 use App\Models\Pegawai;
 use App\Models\Settings;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -21,14 +23,13 @@ class PegawaiAbsensiController extends Controller
     public function index()
     {
         $absensi = Absensi::firstWhere('tgl_absen', date('d-M-Y', time()));
+        $detail_absensi = [];
         if ($absensi) {
             $detail_absensi = AbsensiDetail::where('kode_absensi', $absensi->kode_absensi)
-                                    ->where('pegawai_id', session('id'))
-                                    ->first();
-        }else {
-            $detail_absensi = [];
+                ->where('pegawai_id', session('id'))
+                ->get();
         }
-
+        
         $riwayat_absensi = AbsensiDetail::where('pegawai_id', session('id'))
                                     ->get();
 
@@ -181,11 +182,13 @@ class PegawaiAbsensiController extends Controller
      * @param  \App\Models\Absensi  $absensi
      * @return \Illuminate\Http\Response
      */
-    public function edit(Absensi $absensi)
+    public function edit(Absensi $absensi, Request $request)
     {
+        if (!$request->get('detail_id')) return redirect()->back();
         $detail_absensi = AbsensiDetail::where('kode_absensi', $absensi->kode_absensi)
-                                            ->where('pegawai_id', session('id'))
-                                            ->first();
+            ->where('id', $request->get('detail_id'))
+            ->where('pegawai_id', session('id'))
+            ->first();
                                         
         return view('pegawai.absensi.create', [
             'judul_halaman' => 'Isi Absen',
@@ -206,14 +209,23 @@ class PegawaiAbsensiController extends Controller
     {
         $kode_absensi = $request->kode_absensi;
         $absensi = Absensi::firstWhere('kode_absensi', $request->kode_absensi);
+        $detail = AbsensiDetail::findOrFail($request->absensi_detail_id);
+
         $pengaturan_absen = Settings::first();
         $latitude = $request->latitude;
         $longitude = $request->longitude;
         $image_tag = $request->image_tag;
         $waktu_absen = date('H:i', time());
 
+        // $waktu_absen = '05:30'; // Pagi
+        $waktu_absen = '06:30'; // Pagi - Terlambat
+        // $waktu_absen = '08:45'; // Siang
+        // $waktu_absen = '10:00'; // Siang - Terlambat
+        // $waktu_absen = '13:30'; // Malam
+        // $waktu_absen = '14:30'; // Malam - Terlambat
+
         if ($kode_absensi == null || $latitude == null || $longitude == null || $image_tag == null) {
-            return redirect('/pegawai/absensi/' . $request->kode_absensi . '/edit')->with('jarak', '
+            return redirect()->back()->with('jarak', '
                 <div class="alert alert-danger" role="alert">
                     Semua data harus dilengkapi. pastikan izin lokasi sudah di aktifkan
                 </div>
@@ -246,7 +258,7 @@ class PegawaiAbsensiController extends Controller
 
         if ($pengaturan_absen->batas_jarak < $jarak) {
 
-            return redirect('/pegawai/absensi/' . $request->kode_absensi . '/edit')->with('jarak', '
+            return redirect()->back()->with('jarak', '
                 <div class="alert alert-danger" role="alert">
                     Jarak Kamu dari lokasi kantor adalah <strong>' . $jarak . '</strong> Meter, melebihi aturan batas jarak. Batas jarak yg di tetapkan adalah <strong>' . $pengaturan_absen->batas_jarak . '</strong> Meter
                 </div>
@@ -255,8 +267,19 @@ class PegawaiAbsensiController extends Controller
 
         // echo "Jarak Saya dengan Kantor adalah $jarak M, Batas Jarak yg di tetapkan adalah $pengaturan_absen->batas_jarak M";
 
+        // CARI JAM KERJA
+        $jam_kerja = $this->cariJamKerja($waktu_absen);
+        
+        if ($jam_kerja === false || !$jam_kerja->id) {
+            return redirect()->back()->with('jarak', '
+                <div class="alert alert-danger" role="alert">
+                    Jam kerja tidak ditemukan
+                </div>
+            ');
+        }
+
         // CEK APAKAH DIA TERLAMBAT
-        if (strtotime($waktu_absen) > strtotime($pengaturan_absen->jam_masuk)) {
+        if (strtotime($waktu_absen) > strtotime($jam_kerja->jam_masuk)) {
             $terlambat = 1; // 1 Berarti Telambat
         } else {
             $terlambat = 0; // 0 Berarti tidak terlambat
@@ -274,9 +297,11 @@ class PegawaiAbsensiController extends Controller
             'latitude_masuk' => $latitude,
             'longitude_masuk' => $longitude,
             'bukti_masuk'=> $filename,
+            'jam_kerja_id' => $jam_kerja->id
         ];
         AbsensiDetail::where('kode_absensi', $kode_absensi)
             ->where('pegawai_id', session('id'))
+            ->where('id', $request->absensi_detail_id)
             ->update($data_absensi_detail);
 
         $jumlah_masuk = ($absensi->jumlah_pegawai_masuk + 1);
@@ -302,8 +327,11 @@ class PegawaiAbsensiController extends Controller
     }
     public function absensi_pulang(Request $request)
     {
+        // dd($request->all());
         $kode_absensi = $request->kode_absensi;
         $absensi = Absensi::firstWhere('kode_absensi', $request->kode_absensi);
+        $detail = AbsensiDetail::findOrFail($request->absensi_detail_id);
+
         $pengaturan_absen = Settings::first();
         $latitude = $request->latitude;
         $longitude = $request->longitude;
@@ -311,7 +339,7 @@ class PegawaiAbsensiController extends Controller
         $waktu_absen = date('H:i', time());
 
         if ($kode_absensi == null || $latitude == null || $longitude == null || $image_tag == null) {
-            return redirect('/pegawai/absensi/' . $request->kode_absensi . '/edit')->with('jarak', '
+            return redirect()->back()->with('jarak', '
                 <div class="alert alert-danger" role="alert">
                     Semua data harus dilengkapi. pastikan izin lokasi sudah di aktifkan
                 </div>
@@ -344,9 +372,19 @@ class PegawaiAbsensiController extends Controller
 
         if ($pengaturan_absen->batas_jarak < $jarak) {
 
-            return redirect('/pegawai/absensi/' . $request->kode_absensi . '/edit')->with('jarak', '
+            return redirect()->back()->with('jarak', '
                 <div class="alert alert-danger" role="alert">
                     Jarak Kamu dari lokasi kantor adalah <strong>' . $jarak . '</strong> Meter, melebihi aturan batas jarak. Batas jarak yg di tetapkan adalah <strong>' . $pengaturan_absen->batas_jarak . '</strong> Meter
+                </div>
+            ');
+        }
+
+        // CEK APAKAH DIA Absen sebelum saatnya
+        if (strtotime($waktu_absen) < strtotime($detail->jam_kerja->jam_keluar)) {
+            // dd(' Belum saatnya absen pulang');
+            return redirect()->back()->with('jarak', '
+                <div class="alert alert-danger" role="alert">
+                    Belum saatnya absen pulang ('. $detail->jam_kerja->jam_keluar .')
                 </div>
             ');
         }
@@ -362,9 +400,12 @@ class PegawaiAbsensiController extends Controller
             'latitude_pulang' => $latitude,
             'longitude_pulang' => $longitude,
             'bukti_pulang'=> $filename,
+            'durasi' => $this->hitungDurasiMenit(date('H:i',$detail->absen_masuk), $waktu_absen)
         ];
+        
         AbsensiDetail::where('kode_absensi', $kode_absensi)
             ->where('pegawai_id', session('id'))
+            ->where('id', $request->absensi_detail_id)
             ->update($data_absensi_detail);
 
         $jumlah_keluar = ($absensi->jumlah_pegawai_pulang + 1);
@@ -407,5 +448,32 @@ class PegawaiAbsensiController extends Controller
     public function destroy(Absensi $absensi)
     {
         //
+    }
+
+    function hitungDurasiMenit($jam_masuk, $jam_keluar) {
+        $jamMasuk = DateTime::createFromFormat('H:i', $jam_masuk);
+        $jamKeluar = DateTime::createFromFormat('H:i', $jam_keluar);
+    
+        $durasi = $jamKeluar->diff($jamMasuk);
+        $durasiMenit = $durasi->h * 60 + $durasi->i; // Konversi jam ke menit
+    
+        return $durasiMenit;
+    }
+
+    function cariJamKerja($jamMasuk) {
+        $data = JamKerja::get();
+        $jamMasukInput = DateTime::createFromFormat('H:i', $jamMasuk);
+        
+        foreach ($data as $shift) {
+            $jamMasukShift = DateTime::createFromFormat('H:i', $shift->jam_masuk);
+            $jamMasukShiftSebelumnya = clone $jamMasukShift->modify('-1 hours');
+            $jamMasukShiftBerikutnya = clone $jamMasukShift->modify('+2 hours');
+            
+            if ($jamMasukInput >= $jamMasukShiftSebelumnya && $jamMasukInput <= $jamMasukShiftBerikutnya) {
+                return $shift;
+            }
+        }
+    
+        return false;
     }
 }

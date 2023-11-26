@@ -83,8 +83,8 @@ class SettingsController extends Controller
     {
         $latitude_longitude = explode(',', $request->latitude_longitude);
         $data = [
-            'jam_masuk' => $request->jam_masuk,
-            'jam_keluar' => $request->jam_keluar,
+            // 'jam_masuk' => $request->jam_masuk,
+            // 'jam_keluar' => $request->jam_keluar,
             'latitude' => $latitude_longitude[0],
             'longitude' => trim($latitude_longitude[1], ' '),
             'batas_jarak' => $request->batas_jarak

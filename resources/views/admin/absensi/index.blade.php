@@ -127,6 +127,52 @@
             </div>
             <!-- end ABSEN HARI INI -->
 
+            {{-- LAPORAN ABSEN --}}
+            <div class="row gutters">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">DOWNLOAD LAPORAN ABSENSI</h5>
+
+                            <form action="{{ url('') }}/admin/absensi/download-laporan" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <!-- Row start -->
+                                <div class="row gutters">
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                        <!-- Field wrapper start -->
+                                        <div class="field-wrapper">
+                                            <input class="form-control" type="date" name="tgl_awal" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}" required>
+                                            <div class="field-placeholder">Tanggal Awal <span class="text-danger">*</span></div>
+                                            <div class="form-text">
+                                                Pilih rentan waktu awal laporan.
+                                            </div>
+                                        </div>
+                                        <!-- Field wrapper end -->
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                        <!-- Field wrapper start -->
+                                        <div class="field-wrapper">
+                                            <input class="form-control" type="date" name="tgl_akhir" value="{{ \Carbon\Carbon::now()->lastOfMonth()->format('Y-m-d') }}" required>
+                                            <div class="field-placeholder">Tanggal Akhir <span class="text-danger">*</span></div>
+                                            <div class="form-text">
+                                                Pilih rentan waktu akhir laporan.
+                                            </div>
+                                        </div>
+                                        <!-- Field wrapper end -->
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </div>
+                                <!-- Row end -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- RIWAYAT ABSEN -->
             <div class="row gutters">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">

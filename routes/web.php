@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAbsensiController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminJabatanController;
+use App\Http\Controllers\AdminJamkerjaController;
 use App\Http\Controllers\AdminPegawaiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PegawaiAbsensiController;
@@ -44,10 +45,15 @@ Route::post('/admin/excel_pegawai', [AdminPegawaiController::class, 'excel_pegaw
 Route::post('/admin/edit_pegawai', [AdminPegawaiController::class, 'edit_pegawai']);
 // Admin-Jabatan
 Route::resource('/admin/jabatan', AdminJabatanController::class)->middleware('is_admin');
+// Admin-Jam Kerja
+Route::resource('/admin/jamkerja', AdminJamkerjaController::class)->middleware('is_admin');
+Route::post('/admin/edit_jamkerja', [AdminJamkerjaController::class, 'edit_jamkerja']);
+Route::post('/admin/jamkerja/pegawai', [AdminJamkerjaController::class, 'pegawai']);
 // Admin-Settings
 Route::resource('/admin/settings', SettingsController::class)->middleware('is_admin');
 // Admin-absensi
 Route::resource('/admin/absensi', AdminAbsensiController::class)->middleware('is_admin');
+Route::post('/admin/absensi/download-laporan',[ AdminAbsensiController::class, 'downloadLaporan'])->middleware('is_admin');
 Route::get('/admin/absen/tambah', [AdminAbsensiController::class, 'tambah'])->middleware('is_admin');
 Route::get('/admin/absen_pegawai/{kode_absensi}/{pegawai_id}', [AdminAbsensiController::class, 'absen_pegawai'])->middleware('is_admin');
 Route::get('/admin/izin_pegawai/{kode_absensi}/{pegawai_id}', [AdminAbsensiController::class, 'izin_pegawai'])->middleware('is_admin');

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AbsenExport;
 use App\Models\Absensi;
 use App\Models\AbsensiDetail;
 use App\Models\Admin;
+use App\Models\JamkerjaPegawai;
 use App\Models\Pegawai;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminAbsensiController extends Controller
 {
@@ -109,10 +112,12 @@ class AdminAbsensiController extends Controller
 
         $absen_detail = [];
 
+        // $jam_kerja_pegawai = JamkerjaPegawai::where('status', 1)->get();
         foreach ($pegawai as $p) {
             array_push($absen_detail, [
                 'kode_absensi' => $kode_absen,
-                'pegawai_id' => $p->id
+                'pegawai_id' => $p->id,
+                // 'jam_kerja_id' => $p->jam_kerja_id
             ]);
         }
 
@@ -283,5 +288,11 @@ class AdminAbsensiController extends Controller
                 )
             </script>
         ");
+    }
+
+    public function downloadLaporan(Request $request)
+    {
+        // dd($request->all());
+        return Excel::download(new AbsenExport($request->tgl_awal, $request->tgl_akhir), "Laporan Absen {$request->tgl_awal} - {$request->tgl_akhir}.xlsx");
     }
 }

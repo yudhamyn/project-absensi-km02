@@ -85,6 +85,11 @@
                                     <i class="icon-settings1"></i> setting Absen
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ url('') }}/admin/jamkerja" class="{{ ($menu['page'] == 'jamkerja') ? 'current-page' : '' }}">
+                                    <i class="icon-settings1"></i> Jam Kerja
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

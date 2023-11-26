@@ -25,4 +25,9 @@ class AbsensiDetail extends Model
     {
         return $this->belongsTo(Absensi::class, 'kode_absensi', 'kode_absensi');
     }
+
+    public function jam_kerja()
+    {
+        return $this->belongsTo(JamKerja::class, 'jam_kerja_id');
+    }
 }

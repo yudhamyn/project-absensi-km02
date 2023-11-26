@@ -84,8 +84,10 @@
                                     <thead>
                                         <tr>
                                             <th>Pegawai</th>
+                                            <th>Jam kerja</th>
                                             <th>Absen Masuk</th>
                                             <th>Absen Pulang</th>
+                                            <th>Durasi</th>
                                             <th>Izin</th>
                                             <th></th>
                                         </tr>
@@ -101,6 +103,9 @@
                                                             <p>NIP: #<?= $absen->pegawai->nip; ?></p>
                                                         </div>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    {{ $absen->jam_kerja ? $absen->jam_kerja->nama : '-' }} {{ $absen->jam_kerja ? "({$absen->jam_kerja->kode})" : '' }}
                                                 </td>
                                                 <td>
                                                     <?php if ($absen->izin == null) : ?>
@@ -133,6 +138,7 @@
                                                         IZIN
                                                     <?php endif; ?>
                                                 </td>
+                                                <td>{{ $absen->durasi ?? 0 }} Menit</td>
                                                 <td>
                                                     <?php if ($absen->izin == null) : ?>
                                                         <span class="badge bg-primary">Tidak</span>

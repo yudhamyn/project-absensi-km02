@@ -76,7 +76,7 @@
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="card">
                             <div class="card-body">
-                                {!! session('jarak') !!}
+                                {!! Session::get('jarak') !!}
                                 <center>
                                     <div id="my_camera"></div>
                                 </center>
@@ -95,6 +95,7 @@
                                     <input type="hidden" name="longitude">
                                     <input type="hidden" name="image_tag" class="image-tag">
                                     <input type="hidden" name="kode_absensi" value="<?= $absensi->kode_absensi; ?>">
+                                    <input type="hidden" name="absensi_detail_id" value="<?= $absensi->id; ?>">
                                     <div id="result"></div>
                                 </form>
                             </div>
@@ -109,6 +110,7 @@
                             <div class="card-body">
                                 <?php if (strtotime(date('H:i', time())) >= strtotime($pengaturan->jam_keluar)) : ?>
                                     {!! session('pesan') !!}
+                                    {!! session('jarak') !!}
                                     <center>
                                         <div id="my_camera"></div>
                                     </center>
@@ -130,6 +132,7 @@
                                     <input type="hidden" name="longitude">
                                     <input type="hidden" name="image_tag" class="image-tag">
                                     <input type="hidden" name="kode_absensi" value="<?= $absensi->kode_absensi; ?>">
+                                    <input type="hidden" name="absensi_detail_id" value="<?= $absensi->id; ?>">
                                     <div id="result"></div>
                                 </form>
                             </div>

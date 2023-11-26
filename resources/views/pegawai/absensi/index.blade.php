@@ -1,6 +1,14 @@
 @extends('template.pegawai')
 @section('content')
 @include('template.sidebar.pegawai')
+<style>
+    .btn-group-sm > .btn, .btn-sm {
+        padding: .25rem .5rem !important;
+        font-size: .875rem !important;
+        border-radius: .2rem !important;
+    }
+</style>
+
 <div class="main-container">
 
     <!-- Page header starts -->
@@ -79,72 +87,74 @@
                                 <table class="table table-bordered text-center text-nowrap">
                                     <thead>
                                         <tr>
+                                            <td>Jam Kerja</td>
                                             <td>Masuk</td>
                                             <td>Pulang</td>
+                                            <td>Durasi</td>
                                             <td>Izin</td>
                                             <td>Aksi</td>
                                         </tr>
                                     </thead>
                                     <tbody class="text-nowrap">
-                                        <?php if ($absensi != null) : ?>
-                                            <?php if ($detail_absen != null) : ?>
-                                                <tr class="text-nowrap">
-                                                    <?php if ($detail_absen->izin == null) : ?>
-                                                        <td>
-                                                            <?php if ($detail_absen->absen_masuk == 0) : ?>
-                                                                <span class="badge bg-danger">Belum Absen</span>
-                                                            <?php else : ?>
-                                                                <?php if ($detail_absen->status_masuk == 1) : ?>
-                                                                    <span class="badge bg-danger"><?= date('H : i', $detail_absen->absen_masuk); ?></span>
-                                                                <?php else : ?>
-                                                                    <?= date('H : i', $detail_absen->absen_masuk); ?>
-                                                                <?php endif; ?>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php if ($detail_absen->absen_pulang == 0) : ?>
-                                                                <span class="badge bg-danger">Belum Absen</span>
-                                                            <?php else : ?>
-                                                                <?= date('H : i', $detail_absen->absen_pulang); ?>
-                                                            <?php endif; ?>
-                                                        </td>
+                                        @foreach($detail_absen as $item)
+                                            <tr style="vertical-align: baseline;">
+                                                {{-- <td>{{ $item->jam_kerja->nama }} ({{ $item->jam_kerja->kode }})</td> --}}
+                                                <td>{{ $item->jam_kerja ? $item->jam_kerja->nama : '-' }} {{ $item->jam_kerja ? "({$item->jam_kerja->kode})" : '' }}</td>
+                                                @if ($item->izin == null)
+                                                    <td>
+                                                        @if ($item->absen_masuk)
+                                                            {{date('H : i', $item->absen_masuk) }}
+                                                            <span class="badge bg-danger" {{ $item->status_masuk == 1 ? 'show' : 'hidden' }}>Terlambat</span>
+                                                        @else 
+                                                        <span class="badge bg-warning">Belum Absen</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($item->absen_pulang)
+                                                            {{date('H : i', $item->absen_pulang) }}
+                                                        @else 
+                                                        <span class="badge bg-warning">Belum Absen</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $item->durasi ?? 0 }} Menit</td>
+                                                @else 
+                                                    <td colspan="3">IZIN</td>
+                                                @endif
+                                                    
+
+                                                <td>
+                                                    <?php if ($item->izin == null) : ?>
+                                                        <span class="badge bg-primary">Tidak Izin</span>
                                                     <?php else : ?>
-                                                        <td colspan="2">IZIN</td>
-                                                    <?php endif; ?>
-                                                    <td>
-                                                        <?php if ($detail_absen->izin == null) : ?>
-                                                            <span class="badge bg-primary">Tidak Izin</span>
+                                                        <?php if ($item->status_izin == 0) : ?>
+                                                            <span class="badge bg-warning">Tunggu Persetujuan</span>
                                                         <?php else : ?>
-                                                            <?php if ($detail_absen->status_izin == 0) : ?>
-                                                                <span class="badge bg-warning">Tunggu Persetujuan</span>
-                                                            <?php else : ?>
-                                                                <span class="badge bg-success">Di Izinkan</span>
-                                                            <?php endif; ?>
+                                                            <span class="badge bg-success">Di Izinkan</span>
                                                         <?php endif; ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php if ($detail_absen->absen_masuk == null || $detail_absen->absen_pulang == null || $detail_absen->izin == null) : ?>
-                                                            <?php if ($detail_absen->izin == null && $detail_absen->absen_pulang == null) : ?>
-                                                                <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit/" class="badge rounded-pill bg-primary">Absen</a>
-                                                            <?php endif; ?>
-
-                                                            <?php if ($detail_absen->absen_masuk != null && $detail_absen->absen_pulang != null) : ?>
-                                                                <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>" class="badge rounded-pill bg-success">Detail</a>
-                                                            <?php endif; ?>
-
-                                                            <?php if ($detail_absen->absen_masuk == null && $detail_absen->absen_pulang == null && $detail_absen->izin == null) : ?>
-                                                                <a href="{{ url('') }}/pegawai/izin_absensi/<?= $detail_absen->kode_absensi; ?>" class="badge rounded-pill bg-success">Izin</a>
-                                                            <?php endif; ?>
-
-                                                            <?php if ($detail_absen->absen_masuk == null && $detail_absen->absen_pulang == null && $detail_absen->izin != null) : ?>
-                                                                <a href="{{ url('') }}/pegawai/izin_absensi/<?= $detail_absen->kode_absensi; ?>" class="badge rounded-pill bg-success">Detail</a>
-                                                            <?php endif; ?>
-
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if ($item->absen_masuk == null || $item->absen_pulang == null || $item->izin == null) : ?>
+                                                        <?php if ($item->izin == null && $item->absen_pulang == null) : ?>
+                                                            <a href="{{ url('') }}/pegawai/absensi/<?= $item->kode_absensi; ?>/edit?detail_id={{ $item->id }}" class="btn btn-sm btn-primary"><i class="icon-timelapse"></i> Absen</a>
                                                         <?php endif; ?>
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
+                                    
+                                                        <?php if ($item->absen_masuk != null && $item->absen_pulang != null) : ?>
+                                                            <a href="{{ url('') }}/pegawai/absensi/<?= $item->kode_absensi; ?>" class="btn btn-sm btn-success"><i class="icon-menu1"></i> Detail</a>
+                                                        <?php endif; ?>
+                                    
+                                                        <?php if ($item->absen_masuk == null && $item->absen_pulang == null && $item->izin == null) : ?>
+                                                            <a href="{{ url('') }}/pegawai/izin_absensi/<?= $item->kode_absensi; ?>" class="btn btn-sm btn-success"><i class="icon-exit_to_app"></i>Izin</a>
+                                                        <?php endif; ?>
+                                    
+                                                        <?php if ($item->absen_masuk == null && $item->absen_pulang == null && $item->izin != null) : ?>
+                                                            <a href="{{ url('') }}/pegawai/izin_absensi/<?= $item->kode_absensi; ?>" class="btn btn-sm btn-success"><i class="icon-menu1"></i> Detail</a>
+                                                        <?php endif; ?>
+                                    
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -165,6 +175,7 @@
                                     <thead>
                                         <tr>
                                             <td>Tanggal</td>
+                                            <td>Jam Kerja</td>
                                             <td>Masuk</td>
                                             <td>Pulang</td>
                                             <td>Izin</td>
@@ -178,6 +189,9 @@
                                                     <tr class="text-nowrap">
                                                         <td class="text-nowrap">
                                                             <?= $ra->absensi->tgl_absen; ?>
+                                                        </td>
+                                                        <td class="text-nowrap">
+                                                            <?= $ra->jam_kerja ? $ra->jam_kerja->nama : '-' ?>
                                                         </td>
                                                         <td class="text-nowrap">
                                                             <?php if ($ra->izin == null) : ?>
