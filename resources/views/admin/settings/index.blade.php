@@ -101,11 +101,11 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="row gutters">
+                                    <input class="form-control" type="hidden" name="id" value="{{ $settings->id }}">
 
                                     {{-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                         <!-- Field wrapper start -->
                                         <div class="field-wrapper">
-                                            <input class="form-control" type="hidden" name="id" value="{{ $settings->id }}">
                                             <input class="form-control" type="time" name="jam_masuk" value="{{ $settings->jam_masuk }}">
                                             <div class="field-placeholder">Jam Masuk <span class="text-danger">*</span></div>
                                             <div class="form-text">
