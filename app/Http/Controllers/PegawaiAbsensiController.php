@@ -218,7 +218,7 @@ class PegawaiAbsensiController extends Controller
         $waktu_absen = date('H:i', time());
 
         // $waktu_absen = '05:30'; // Pagi
-        $waktu_absen = '06:30'; // Pagi - Terlambat
+        // $waktu_absen = '06:30'; // Pagi - Terlambat
         // $waktu_absen = '08:45'; // Siang
         // $waktu_absen = '10:00'; // Siang - Terlambat
         // $waktu_absen = '13:30'; // Malam
