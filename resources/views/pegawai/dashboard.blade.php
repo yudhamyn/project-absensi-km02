@@ -8,6 +8,9 @@
             font-size: .875rem !important;
             border-radius: .2rem !important;
         }
+        .li-absen:hover {
+            background-color: #1273eb !important;
+        }
     </style>
     <!-- Page header starts -->
     <div class="page-header">
@@ -45,7 +48,13 @@
                 <ul class="header-actions">
                     <li class="dropdown">
                     </li>
-                    <li class="dropdown">
+                    <li class="dropdown li-absen">
+                        <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit?detail_id={{ $detail_absen->id }}" class="btn btn-sm btn-primary btn-absen">
+                            <span class="icon" style="font-size: 20px;color: unset;">
+                                <i class="icon-open_in_new"></i>
+                            </span>
+                            Absen Sekarang
+                        </a>
                     </li>
                     <li class="dropdown">
                         <a href="#" id="userSettings" class="user-settings" data-toggle="dropdown" aria-haspopup="true">
@@ -121,7 +130,7 @@
             @if ($absensi)
                 @if ($detail_absen)
                     <div class="row">
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex flex-column">
@@ -156,7 +165,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
+                        <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="table-responsive">
