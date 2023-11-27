@@ -6,6 +6,7 @@ use App\Models\Absensi;
 use App\Models\AbsensiDetail;
 use App\Models\Pegawai;
 use App\Models\Settings;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,8 +17,15 @@ class PegawaiController extends Controller
         $absensi = Absensi::firstWhere('tgl_absen', date('d-M-Y', time()));
         if ($absensi) {
             $detail_absensi = AbsensiDetail::where('kode_absensi', $absensi->kode_absensi)
-                                    ->where('pegawai_id', session('id'))
-                                    ->first();
+                ->where('pegawai_id', session('id'))
+                ->first();
+            
+            $jamMasuk = date('H:i', $detail_absensi->absen_masuk);
+            $jamPulang = date('H:i', $detail_absensi->absen_pulang);
+            $durasi = $this->hitungDurasi($jamMasuk, $detail_absensi->absen_pulang > 0 ? $jamPulang : date('H:i'));
+            // dd($durasi);
+            $detail_absensi->duration_text = "Anda berkerja selama {$durasi['jam']} jam {$durasi['menit']} Menit";
+            
         }else {
             $detail_absensi = [];
         }
@@ -34,6 +42,20 @@ class PegawaiController extends Controller
             'detail_absen' => $detail_absensi,
             'pengaturan' => Settings::first(),
         ]);
+    }
+
+    function hitungDurasi($jamMasuk, $jamKeluar) {
+        $jamMasukObj = DateTime::createFromFormat('H:i', $jamMasuk);
+        $jamKeluarObj = DateTime::createFromFormat('H:i', $jamKeluar);
+    
+        $durasi = $jamKeluarObj->diff($jamMasukObj);
+    
+        return [
+            'jam_masuk' => $jamMasuk,
+            'jam_keluar' => $jamKeluar,
+            'jam' => $durasi->h,
+            'menit' => $durasi->i
+        ];
     }
 
     public function profile()

@@ -26,16 +26,32 @@ class AbsenExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
     */
     public function collection()
     {
-        return AbsensiDetail::all();
+        // dd([$this->tgl_awal, $this->tgl_akhir]);
+        // return AbsensiDetail::whereHas('absensi', function ($query) {
+            // return $query->whereBetween('tgl_absen', [$this->tgl_awal, $this->tgl_akhir]);
+            // return $query->whereRaw("DATE_FORMAT(absensi.tgl_absen, \"%Y-%m-%d\") between '2023-11-01' and '2023-11-31'");
+        // })->get();
+        $data = AbsensiDetail::get();
+
+        $tgl_awal = Carbon::createFromDate($this->tgl_awal);
+        $tgl_akhir = Carbon::createFromDate($this->tgl_akhir);
+
+        $temp = collect([]);
+        foreach ($data as $key => $item) {
+            if(Carbon::createFromDate($item->absensi->tgl_absen)->between($tgl_awal, $tgl_akhir)) $temp->push($item);
+        }
+
+        return $temp;
     }
 
     public function headings(): array
     {
         return [
             'Tanggal Absen',
-            'NIP',
             'Nama',
+            'Jabatan',
             'Status',
+            'Jam Kerja',
             'Jam Masuk',
             'Jam Pulang',
             'Durasi Kerja (menit)',
@@ -49,14 +65,16 @@ class AbsenExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
         $absen_masuk = Carbon::createFromTimestamp($item->absen_masuk)->format('H:i');
         $absen_pulang = Carbon::createFromTimestamp($item->absen_pulang)->format('H:i');
         $status_izin = $item->status_izin == 0 ? 'Pending' : ($item->status_izin == 1 ? 'Di setujui' : 'Di tolak');
+        $jam_kerja = $item->jam_kerja;
 
         return [
             $tgl_absen,
-            $item->pegawai->nip,
             $item->pegawai->nama,
-            $item->status_masuk == 1 ? 'Terlambat' : 'Tepat Waktu',
-            $item->izin == 1 ? 'Izin' : $absen_masuk,
-            $item->izin == 1 ? 'Izin' : $absen_pulang,
+            $item->pegawai && $item->pegawai->jabatan ? $item->pegawai->jabatan->nama : '-',
+            $item->status_masuk == 1 ? 'Terlambat' : (!$item->absen_masuk && !$item->absen_pulang ? 'Belum Absen' : 'Tepat Waktu'),
+            $jam_kerja ? "$jam_kerja->nama ($jam_kerja->kode)" : '-',
+            $item->izin == 1 ? 'Izin' : ($item->absen_masuk > 0 ? $absen_masuk : '-'),
+            $item->izin == 1 ? 'Izin' : ($item->absen_pulang > 0 ? $absen_pulang : '-'),
             $item->durasi ?? '0',
             $item->izin == 1 ? "Ya ($status_izin)" : 'Tidak'
         ];
