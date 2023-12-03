@@ -7,7 +7,7 @@
         <!-- Tabs nav start -->
         <div class="nav" role="tablist" aria-orientation="vertical">
             <a href="#" class="logo">
-                <img src="{{ url('') }}/assets/template/presensi-abdul/img/logo.jpg" alt="Uni Pro Admin">
+                <img src="{{ url('') }}/assets/template/presensi-abdul/img/logokm02.jpg" alt="Uni Pro Admin">
             </a>
             <a class="nav-link {{ ($menu['tab'] == 'home') ? 'show active' : '' }}" id="home-tab" data-bs-toggle="tab" href="#tab-home" role="tab" aria-controls="tab-home" aria-selected="true">
                 <i class="icon-home2"></i>

@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="{{ url('') }}/assets/template/presensi-abdul/img/logo.jpg" />
 
     <!-- Title -->
-    <title>E-Presensi Premium By Abduloh Installasi</title>
+    <title>E-Presensi Premium By yudhamyn</title>
 
 
     <!-- *************

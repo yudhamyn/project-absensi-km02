@@ -85,7 +85,7 @@
 
                             <!-- Welcome Title -->
                             <div class="welcome-title">
-                                <h1>Welcome to <span>PT. AM</span>
+                                <h1>Welcome to <span>KM 02</span>
                                 </h1>
                             </div>
 
@@ -96,11 +96,11 @@
                                     <h6>Admin</h6>
                                 </div>
                                 <div class="sales-tile">
-                                    <h1>1028</h1>
+                                    <h1>12</h1>
                                     <h6>Pegawai</h6>
                                 </div>
                                 <div class="sales-tile">
-                                    <h1>12</h1>
+                                    <h1>3</h1>
                                     <h6>Jabatan</h6>
                                 </div>
                             </div>

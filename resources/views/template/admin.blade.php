@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Meta -->
-  <meta name="description" content="Aplikasi Presensi Premium By Abduloh Malela">
-  <meta name="author" content="Abduloh Malela">
+  <meta name="description" content="Aplikasi Presensi Premium By yudhamyn">
+  <meta name="author" content="yudhamyn">
   <link rel="shortcut icon" href="{{ url('') }}/assets/template/presensi-abdul/img/logo.jpg">
 
   <!-- Title -->
