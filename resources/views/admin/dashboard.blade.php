@@ -100,7 +100,7 @@
                                     <h6>Pegawai</h6>
                                 </div>
                                 <div class="sales-tile">
-                                    <h1>3</h1>
+                                    <h1>12</h1>
                                     <h6>Jabatan</h6>
                                 </div>
                             </div>
