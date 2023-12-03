@@ -468,7 +468,7 @@ class PegawaiAbsensiController extends Controller
         foreach ($data as $shift) {
             $jamMasukShift = DateTime::createFromFormat('H:i', $shift->jam_masuk);
             $jamMasukShiftSebelumnya = clone $jamMasukShift->modify('-1 hours');
-            $jamMasukShiftBerikutnya = clone $jamMasukShift->modify('+2 hours');
+            $jamMasukShiftBerikutnya = clone $jamMasukShift->modify('+5 hours');
             
             if ($jamMasukInput >= $jamMasukShiftSebelumnya && $jamMasukInput <= $jamMasukShiftBerikutnya) {
                 return $shift;
