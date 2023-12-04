@@ -86,10 +86,14 @@
                                             </span>
                                             Absen Masuk
                                         </h5>
-                                        @if($detail_absen->absen_masuk == 0)
-                                            <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit?detail_id={{ $detail_absen->id }}" class="btn btn-sm btn-primary mt-3">Absen Sekarang</a>
+                                        @if ($detail_absen)
+                                            @if($detail_absen->absen_masuk == 0)
+                                                <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit?detail_id={{ $detail_absen->id }}" class="btn btn-sm btn-primary mt-3">Absen Sekarang</a>
+                                            @else
+                                                <h1>{{ date('H : i', $detail_absen->absen_masuk) }}</h1>
+                                            @endif
                                         @else
-                                            <h1>{{ date('H : i', $detail_absen->absen_masuk) }}</h1>
+                                            <h1>-</h1>
                                         @endif
                                     </div>
 
@@ -101,12 +105,20 @@
                                                 <i class="icon-open_in_new"></i>
                                             </span>
                                             Absen Keluar
-                                            <h5 class="text-danger">{{ $detail_absen->duration_text }}</h5>
+                                            @if ($detail_absen)
+                                                <h5 class="text-danger mt-3 mb-0">{{ $detail_absen->duration_text }}</h5>
+                                            @else
+                                                <h5 class="text-danger mt-3 mb-0">Belum ada absen</h5>
+                                            @endif
                                         </h5>
-                                        @if($detail_absen->absen_pulang == 0)
-                                        <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit?detail_id={{ $detail_absen->id }}" class="btn btn-sm btn-primary mt-3">Absen Sekarang</a>
+                                        @if ($detail_absen)
+                                            @if($detail_absen->absen_pulang == 0)
+                                            <a href="{{ url('') }}/pegawai/absensi/<?= $detail_absen->kode_absensi; ?>/edit?detail_id={{ $detail_absen->id }}" class="btn btn-sm btn-primary mt-3">Absen Sekarang</a>
+                                            @else
+                                                <h1>{{ date('H : i', $detail_absen->absen_pulang) }}</h1>
+                                            @endif
                                         @else
-                                            <h1>{{ date('H : i', $detail_absen->absen_pulang) }}</h1>
+                                            <h1>-</h1>
                                         @endif
                                     </div>
                                 </div>
